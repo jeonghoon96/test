@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html> <head>
+		<meta charset="UTF-8">
+		
+		<title>Monitoring Status</title>
+		<style>
+			body {
+				background-color: white;
+			}
+			h1 {
+				color: black;
+                        }
+
+			h2 {
+				color: blue;
+				margin-left: 120px;
+			}
+		</style> 		
+	</head>	
+	<body>
+		<h1>Test Page</h1>
+		<hr>
+			<h2>Status value</h2>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;
+  padding:10px 5px;word-break:normal;}
+.tg th{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tp75{background-color:#38fff8;border-color:#00009b;font-size:20px;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-9cvt{background-color:#cb0000;border-color:#00009b;font-size:20px;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-vt65{background-color:#ffccc9;color:#ffffff;font-size:20px;text-align:center;vertical-align:top}
+.tg .tg-vsli{background-color:#f8a102;font-size:20px;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-gxd4{background-color:#fffe65;border-color:#00009b;font-size:20px;font-weight:bold;text-align:center;vertical-align:top}
+</style>
+<table class="tg" style="undefined;table-layout: fixed; width: 405px">
+<colgroup>
+<col style="width: 216px">
+<col style="width: 189px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-tp75">Humidiry</th>
+    <th id = "hum" class="tg-vt65">50 %</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-vsli">Gas</td>
+    <td id = "gass" class="tg-vt65">{{gas}}</td>
+  </tr>
+  <tr>
+    <td class="tg-gxd4">Temperature</td>
+    <td id = "tem" class="tg-vt65">{{temper}} ºC</td>
+  </tr>
+  <tr>
+    <td class="tg-9cvt">Somebody</td>
+    <td id = "some" class="tg-vt65">Yes</td>
+  </tr>
+</tbody>
+</table>
+
+<br>
+<hr>
+<h1>Snapshot</h1>
+<img height = "200" width = "200" src="{{url_for('static',filename='test0.jpg')}}">
+<img height = "200" width = "200" src="{{url_for('static',filename='test1.jpg')}}">
+<img height = "200" width = "200" src="{{url_for('static',filename='test2.jpg')}}">
+
+<br><br><br>
+<p id="gas">{{gas}}</p> 
+<p id="temperature">{{temperature}}</p> 
+<p id="humidity">{{humidity}}</p> 
+<p id="somebody">{{somebody}}</p> 
+
+	</body>
+</html>
+
