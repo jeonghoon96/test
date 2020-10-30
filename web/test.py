@@ -19,7 +19,10 @@ firebase_admin.initialize_app(cred,{
     'databaseURL' : 'https://fcmtest-2ed81.firebaseio.com/'
 })
 th = 0
-
+ser = serial.Serial(
+port='/dev/ttyACM0',
+baudrate = 9600
+)
 def th_read():
     global th
     th = th+1
@@ -28,9 +31,12 @@ def th_read():
     #print("humidity: "+str(ret_hum_n))
     #print("gas: "+str(ret_gas_n))
     #print("Invader: "+str(ret_some))
-    read_data()
-    snapshot()
-    threading.Timer(1, th_read).start() #1초마다 함수실행
+    thread=threading.Thread(target=read_data)
+    thread.daemon=True
+    thread.start()
+    #read_data()
+    #snapshot()
+    #threading.Timer(1, th_read).start()
 
 
 def sendMessage(mToken):
@@ -94,10 +100,13 @@ def pir_anal(res):
        
 
 def read_data() :
+    '''
     ser = serial.Serial(
     port='/dev/ttyACM0',
     baudrate = 9600
 )
+    '''
+    global ser
     while True:
         
         if ser.readable():
@@ -108,11 +117,11 @@ def read_data() :
             #print(res.decode()[:len(res)-1])
             if res.decode()[:len(res)-1] == "start\r" :
                 res1 = ser.readline()
-                #print(res1.decode()[0:5])
-                #print(res1.decode()[6:11])
-                #print(res1.decode()[12:15])
-                #print(res1.decode()[16])
-               
+                print(res1.decode()[0:5])
+                print(res1.decode()[6:11])
+                print(res1.decode()[12:15])
+                print(res1.decode()[16])
+             
                
                     
                 temperature_anal(res1.decode()[0:4])
@@ -121,8 +130,8 @@ def read_data() :
                 pir_anal(res1.decode()[16])
                      
                 
-                
-                return 0
+                sleep(1)
+                #return 0
                
               
 def open_browser():
