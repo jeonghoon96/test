@@ -58,10 +58,7 @@ void loop() {
      noTone(speaker);
      tone(speaker,1500);
      delay(50);
-     noTone(speaker);
-     tone(speaker,1509);
-     delay(50);
-     noTone(speaker);     
+     noTone(speaker); 
    }
    
   Serial.println("start");                  // Serial start
