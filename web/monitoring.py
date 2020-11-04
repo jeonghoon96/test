@@ -173,7 +173,6 @@ def read_data() :
                
 #Snapshot for 4 queue pictures
 def snapshot():
-
     while True:
         global num 
         shot_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
@@ -182,8 +181,6 @@ def snapshot():
             file_dir = '/home/pi/Desktop/project/web/static/test' + str(num) + '.jpg'
             camera.capture(file_dir)
             num = num + 1
-            camera.annotate_text = shot_time
-            print(shot_time)
             print(file_dir) #Picture's directory
             camera.close()
             sleep(1)
