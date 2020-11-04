@@ -46,7 +46,7 @@ void loop() {
       }
   }
    
-  if(some == 1 && sound == 0){         // 인체감지후 5초 이내 부저 동작
+  if(some == 1 && sound == 0){         // 인체감지가 활성화된 동안 부저는 계속 동작
      tone(speaker,1200);
      delay(50);
      noTone(speaker);
