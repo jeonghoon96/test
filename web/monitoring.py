@@ -1,3 +1,4 @@
+#!/usr/bin/ python
 import serial
 import threading
 import firebase_admin
@@ -44,7 +45,8 @@ num = 0
 
 temp_time = 0
 humi_time = 0
-gas_time = 0
+gas1_time = 0
+gas2_time = 0
 move_time = 0
 
 ser = serial.Serial(
@@ -84,7 +86,8 @@ def sendMessage():
     
     global temp_time
     global humi_time
-    global gas_time
+    global gas1_time
+    global gas2_time
     global move_time
 
     while(True):
@@ -108,13 +111,19 @@ def sendMessage():
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
             print(result) #Push result(Success/Failure)
             humi_time = int(time.time())
-        elif(g_gas > 300 and (send_time - gas_time) > 30):
+        elif(g_gas >= 200 and g_gas < 250 and (send_time - gas1_time) > 60):
+            message_title = "Danger!!"
+            message_body = "valve check"+"("+str(g_gas)+")"
+            result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
+            print(result) #Push result(Success/Failure)
+            gas1_time = int(time.time())
+        elif(g_gas >= 250 and (send_time - gas2_time) > 30):
             message_title = "Danger!!"
             message_body = "Gas leakage"+"("+str(g_gas)+")"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
             print(result) #Push result(Success/Failure)
-            gas_time = int(time.time())
-
+            gas2_time = int(time.time())
+        
         elif(g_move == "Movement detected!" and (send_time - move_time) > 30):
             message_title = "Danger"
             message_body = "Somebody invaded!"
@@ -153,10 +162,10 @@ def read_data() :
                 
                 g_temp = float(res1.decode()[0:5])
                 g_humi = float(res1.decode()[6:11])
-                g_gas = int(res1.decode()[12:15])
-                
+                g_gas = int(res1.decode()[12:16])
+                g_gas -= 1000
 
-                if res1.decode()[16] == '1':
+                if res1.decode()[17] == '1':
                     g_move = "Movement detected!"
                 else:
                     g_move = "No movement"
