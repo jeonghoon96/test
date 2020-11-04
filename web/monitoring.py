@@ -1,4 +1,4 @@
-#!/usr/bin/ python
+#!/usr/bin/ python3
 import serial
 import threading
 import firebase_admin
@@ -24,7 +24,7 @@ from time import localtime, strftime, sleep
 
 #Firebase(FCM) Authentication
 push_service = FCMNotification(api_key="AAAA6oFTOZk:APA91bGV8mG3Qm5sVNHc93ek8veiUEU80GcgzXEPYKbH1u0rOIvGAguj5yEDJaaPhKRMmH92bAyssEeE42hxLNrPhopM4rfLd-XRR6jDdSuUmKL1o3uoeuUCKGEzV5VzenOmNLlo3syo")
-cred = credentials.Certificate('./FCM_key.json')
+cred = credentials.Certificate('/home/pi/Desktop/project/web/FCM_key.json')
 
 #FCM Database URL
 firebase_admin.initialize_app(cred,{
