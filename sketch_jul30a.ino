@@ -13,6 +13,7 @@ float humi_prev;  // 습도측정값
 
 int val = 0;      // 인체감지센서 측정값(HIGH/LOW) 
 int some = 0;     // 인체감지센서 cool down 변수
+int stack = 0;    // 인체감지센서 누적스택
 int start_time;   // 인체감지 측정 시각
 
 //Time delay for 1 sec
@@ -41,8 +42,14 @@ void loop() {
   
     val = digitalRead(inputPin);         // 인체감지센서 신호값을 읽어와서 val에 저장
     if (val == HIGH){                    // 센서 신호값이 HIGH면(인체감지가 된 경우)
+      if(stack == 0){                    // 센서 오동작 감지 필터링
+        stack = stack + 1;
+      }
+      else{
       start_time = (int)millis();       
-      some = 1;    
+      some = 1;
+      stack = 0;
+      }
     } 
     else {                                    // 센서 신호값이 LOW면(인체감지가 없으면)
       if((int)millis() - start_time > 5000){  // 인체감지가 되지 않는 시간이 5초 이상
@@ -73,6 +80,6 @@ void loop() {
     Serial.print("k"); 
     Serial.print(1000 + analogRead(gasPin));
     Serial.print("k");
-    Serial.println(some);                    //Serial end  
+    Serial.println(val);                    //Serial end  
   }
 }
