@@ -39,6 +39,8 @@ humi_time = 0
 gas1_time = 0
 gas2_time = 0
 move_time = 0
+detect_time = 0
+fil = 0
 
 ser = serial.Serial(
     port='/dev/ttyACM0',
@@ -93,32 +95,33 @@ def sendMessage():
             message_title = "Danger!!"
             message_body = "Temperature High"+"("+str(g_temp)+")"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
-            print(result) #Push result(Success/Failure)
+            #print(result) #Push result(Success/Failure)
             temp_time = int(time.time())
     
         elif(g_humi > 80 and (send_time - humi_time) > 30):
             message_title = "Alert!!"
             message_body = "Humidity High"+"("+str(g_humi)+")"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
-            print(result) #Push result(Success/Failure)
+            #print(result) #Push result(Success/Failure)
             humi_time = int(time.time())
         elif(g_gas >= 200 and g_gas < 250 and (send_time - gas1_time) > 3600):
             message_title = "Alert!!"
             message_body = "Valve check"+"("+str(g_gas)+")"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
-            print(result) #Push result(Success/Failure)
+            #print(result) #Push result(Success/Failure)
             gas1_time = int(time.time())
         elif(g_gas >= 250 and (send_time - gas2_time) > 30):
             message_title = "Danger!!"
             message_body = "Gas leakage"+"("+str(g_gas)+")"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
-            print(result) #Push result(Success/Failure)
+            #print(result) #Push result(Success/Failure)
             gas2_time = int(time.time())
         
         elif(g_move == "Movement detected!" and (send_time - move_time) > 30):
             message_title = "Danger"
             message_body = "Somebody invaded!"
             result = push_service.notify_single_device(registration_id = registration_id, message_title = message_title, message_body = message_body)
+            #print(result) #Push result(Success/Failure)
             move_time = int(time.time()) 
         sleep(0.5)
 
@@ -132,6 +135,8 @@ def read_data() :
     global g_move
     global num
     global ser
+    global detect_time
+    global fil
     
     while True:   
         if ser.readable():
@@ -152,10 +157,17 @@ def read_data() :
                 g_humi = float(res1.decode()[6:11])
                 g_gas = int(res1.decode()[12:16]) - 1000
                 
-
-                if res1.decode()[17] == '1':
-                    g_move = "Movement detected!"
+                read_time = int(time.time())
+                if(res1.decode()[17] == '1'):
+                    if((read_time - detect_time) > 5):
+                        detect_time = int(time.time())
+                        fil = fil + 1
+                    elif(fil == 1):
+                        fil = fil + 1
+                    else:
+                        g_move = "Movement detected!" 
                 else:
+                    fil = 0
                     g_move = "No movement"
                     if(num >= 4):
                         num = 0
@@ -166,24 +178,30 @@ def read_data() :
                 print("gas:"+str(g_gas))
                 print(g_move)
                 print(strftime("%H:%M:%S", localtime()))
+                print("fil="+str(fil))
+                print(res1.decode()[17])
                 print() 
                 
-                sleep(1)
+                sleep(0.5)
                 
                
 #Snapshot for 4 queue pictures
 def snapshot():
     while True:
         global num 
-        shot_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
+        #shot_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
+        shot_time = strftime("%y%m%d_%H%M%S", localtime())
         if g_move == "Movement detected!" and num < 4:
             camera = PiCamera()
+            camera.annotate_text = str(shot_time) #Annotate text in picture
+            camera.exposure_mode = 'sports'       #Increase capture speed
             file_dir = '/home/pi/Desktop/project/web/static/test' + str(num) + '.jpg'
             camera.capture(file_dir)
+            sleep(1)
             num = num + 1
             print(file_dir) #Picture's directory
             camera.close()
-            sleep(1)
+            
     
 #Rendering to HTML page with sensor data        
 @app.route('/')
